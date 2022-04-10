@@ -1,0 +1,124 @@
+import React from 'react'
+import {useState, useEffect} from 'react'
+import {Form, Button, FormControl, InputGroup} from 'react-bootstrap'
+
+
+function GuessingGame() {
+    const [actualNum, setActualNumber] = useState();
+    const [guess, setGuess] = useState(0);
+    const [message, setMessage] = useState("Start Guessing");
+    const [totalGuesses, setTotalGuesses] = useState(0);
+   
+    useEffect(() => {
+        const myActualNum = localStorage.getItem("actualNum", actualNum);
+        const myGuess = localStorage.getItem("guess", guess);
+        const myMessage = localStorage.getItem("message", message);
+        const myTotalGuesses = localStorage.getItem("totalGuesses",totalGuesses);
+    
+
+
+    setActualNumber(myActualNum || 0);
+    setGuess(myGuess || "");
+    setMessage(myMessage || "");
+    setTotalGuesses(parseInt(myTotalGuesses || 0));
+
+
+    if (!actualNum) {
+        setLuckyNumber();
+      }
+    }, []);
+
+    const setLuckyNumber = () => setActualNumber(Math.round(Math.random() * 101));
+
+    const onGuessNumber = () => {
+      const newTotalGuesses = (parseInt(totalGuesses) || 0) + 1;
+  
+      setTotalGuesses(newTotalGuesses);
+
+      if (parseInt(guess) < parseInt(actualNum)) {
+        setMessage("That number is too low");
+      } else if (parseInt(guess) > parseInt(actualNum)) {
+        setMessage("That number is too high");
+      } else {
+        setMessage("Congratulations you got it!");
+      }
+  
+      localStorage.setItem("actualNum", actualNum);
+      localStorage.setItem("guess", guess);
+      localStorage.setItem("message", message);
+      localStorage.setItem("totalGuesses", newTotalGuesses);
+    };
+    const uponReset = () => {
+        setGuess(" ");
+        setLuckyNumber();
+        setActualNumber(null);
+        setMessage("");
+        setTotalGuesses(0);
+      };
+      return (
+       <div>
+        <Form
+          style={{
+            maxWidth: 600,
+            width: "100%",
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
+          }}
+          className="gap-2"
+        >
+          <p>
+            I'm thinking of a number between 1 and 100. Guess the Lucky Number!{" "}
+          </p>
+          <p>You have made {totalGuesses} guesses</p>
+          <InputGroup className="mb-3">
+            <FormControl
+              placeholder="Guess A Number"
+              type="text"
+              value={guess}
+              onChange={(e) => setGuess(e.target.value)}
+            />
+          </InputGroup>
+    
+          <div>
+            <Button variant="primary" size="m"  onClick={onGuessNumber}>
+              Guess
+            </Button>
+          </div>
+          <div>
+            <Button variant="primary" size="m" onClick={uponReset}>
+              Reset
+            </Button>
+          </div>
+          <p>{message}</p>
+        </Form>
+        </div>
+      );
+    }
+   
+    export default GuessingGame;
+    
+import React from 'react';
+import GuessingGame from './GuessingGame';
+
+
+
+function App() {
+ 
+ return (
+    <div  style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}>
+
+   <GuessingGame/>
+   
+    </div>
+  );
+}
+
+export default App;
+
+
+
